@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TUNA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style>
+        #game {
+            height: 600px;
+        }
+
+        input[type=range] {
+            height: 2rem;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            height: 36px;
+            width: 36px;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            height: 36px;
+            width: 36px;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-ms-thumb {
+            height: 36px;
+            width: 36px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="container text-center py-4">
+        <h1>Tuning Game</h1>
+    </div>
+    <div class="row">
+        <div id="game" class="col-xl-9"></div>
+        <div class="col-xl-3">
+            <h3 class="mt-4">How to play</h3>
+            <p>
+                Adjust the values of the parameters below. When you're ready, submit the parameters to receive a metric.
+                <b>The better the metric, the higher you can jump</b>. Press <i>Space</i>
+                to jump and collect the stars - try and collect all stars.
+            </p>
+            <br/>
+            <h3>Parameters</h3>
+            <div class="row my-3">
+                <label for="x1" class="col-sm-2">x1:</label>
+                <div class="col-sm-10">
+                    <input id="x1" type="range" min="-10" max="10" value="0"
+                           class="slider w-100 align-middle">
+                </div>
+            </div>
+            <div class="row">
+                <label for="x2" class="col-sm-2">x2:</label>
+                <div class="col-sm-10">
+                    <input id="x2" type="range" min="-10" max="10" value="0"
+                           class="slider w-100 align-middle">
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"
+        integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"
+        integrity="sha512-qzrZqY/kMVCEYeu/gCm8U2800Wz++LTGK4pitW/iswpCbjwxhsmUwleL1YXaHImptCHG0vJwU7Ly7ROw3ZQoww=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/2.6.2/phaser.min.js"></script>
+<script src="./game.js"></script>
+</body>
+</html>

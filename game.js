@@ -9,7 +9,8 @@ let game = new Phaser.Game(width, height, Phaser.CANVAS, 'game',
 let player;
 let facing = 'right';
 let jumpTimer = 0;
-let touch;
+let touch1;
+let touch2;
 let cursors;
 let jumpButton;
 let background;
@@ -28,13 +29,11 @@ let metricsValue = "none";
 let metricsText;
 let metricsUpdateText;
 let metricsUpdateImage;
-let submitButton;
 
 function preload() {
     // Load images
     game.load.spritesheet('player', 'assets/player.png', 32, 48);
     game.load.image('background', 'assets/background.png');
-    game.load.image("submitButton", "assets/submit_button.png");
     game.load.image('star', 'assets/star.png');
     game.load.image('platform', 'assets/platform.png');
     game.load.image('rocket', 'assets/rocket.png');
@@ -42,6 +41,9 @@ function preload() {
 
 function create() {
     // Game settings
+    if (!Phaser.Device.desktop) {
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    }
     game.physics.startSystem(Phaser.Physics.ARCADE);
     game.time.desiredFps = 30;
 
@@ -49,7 +51,8 @@ function create() {
     background = game.add.tileSprite(0, 0, 800, 600, 'background');
     cursors = game.input.keyboard.createCursorKeys();
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    touch = game.input.pointer1;
+    touch1 = game.input.pointer1;
+    touch2 = game.input.pointer2;
 
     // Create player
     player = game.add.sprite(32, 32, 'player');
@@ -90,9 +93,6 @@ function create() {
     starNumberText = game.add.text(game.world.right - 170, 16, 'Star: 0/3',
         {font: '24px Arial', fill: '#fff'});
 
-    // TuningGame texts
-    submitButton = game.add.button(game.world.right - 170, 550,
-        "submitButton", submitButtonOnClick, this, 2, 1, 0);
     metricsText = game.add.text(16, 16, "Metrics: none",
         {font: "24px Arial", fill: "#fff"});
     metricsUpdateText = game.add.text(game.world.centerX - 130, height, "none",
@@ -131,16 +131,18 @@ function update() {
     // Move the player
     player.body.velocity.x = 0;
 
-    const pointerIsDown = touch.isDown;
+    const pointerIsDown = touch1.isDown;
+    const touch1X = touch1.worldX;
+    const touch1Y = touch1.worldY;
 
-    if (cursors.left.isDown || pointerIsDown && touch.screenX < 400 && touch.screenY > 250) {
+    if (cursors.left.isDown || pointerIsDown && touch1X < 400 && touch1Y > 250) {
         player.body.velocity.x = -150;
 
         if (facing != 'left') {
             player.animations.play('left');
             facing = 'left';
         }
-    } else if (cursors.right.isDown || pointerIsDown && touch.screenX > 400 && touch.screenY > 250) {
+    } else if (cursors.right.isDown || pointerIsDown && touch1X > 400 && touch1Y > 250) {
         player.body.velocity.x = 150;
 
         if (facing != 'right') {
@@ -161,7 +163,7 @@ function update() {
         }
     }
 
-    const isPointerJumping = pointerIsDown && touch.screenY < 350;
+    const isPointerJumping = pointerIsDown && touch1Y < 350;
 
     if ((jumpButton.isDown || isPointerJumping) && player.body.onFloor() && game.time.now > jumpTimer
         || (jumpButton.isDown || isPointerJumping) && player.body.touching.down && game.time.now
@@ -219,13 +221,15 @@ function submitMetric(parameterX1, parameterX2) {
         metricsUpdateImage.alpha = 0;
 
         // Display
-        game.add.tween(metricsUpdateText).to({y: -32}, 2000,
+        const durationTime = 1500;
+
+        game.add.tween(metricsUpdateText).to({y: -32}, durationTime,
             Phaser.Easing.Linear.None, true);
-        game.add.tween(metricsUpdateText).to({alpha: 1}, 2000,
+        game.add.tween(metricsUpdateText).to({alpha: 1}, durationTime,
             Phaser.Easing.Linear.None, true);
-        game.add.tween(metricsUpdateImage).to({y: -180}, 2000,
+        game.add.tween(metricsUpdateImage).to({y: -180}, durationTime,
             Phaser.Easing.Linear.None, true);
-        game.add.tween(metricsUpdateImage).to({alpha: 1}, 2000,
+        game.add.tween(metricsUpdateImage).to({alpha: 1}, durationTime,
             Phaser.Easing.Linear.None, true);
     }, 500)
 }

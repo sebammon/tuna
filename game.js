@@ -1,6 +1,6 @@
 // Phaser variables
-let width = 800;
-let height = 600;
+const width = 800;
+const height = 600;
 
 let game = new Phaser.Game(width, height, Phaser.CANVAS, 'game',
     {preload: preload, create: create, update: update, render: render});
@@ -16,19 +16,19 @@ let jumpButton;
 let background;
 let platforms;
 let stars;
-let starNumber = 0;
-let starNumberText;
-let winText;
+let starCount = 0;
+let starCountText;
+let winningText;
 
 // TuningGame variables
 let parameterX1Text;
 let parameterX1Value;
 let parameterX2Text;
 let parameterX2Value;
-let metricsValue = "none";
-let metricsText;
-let metricsUpdateText;
-let metricsUpdateImage;
+let jumpPowerValue = 0;
+let jumpPowerText;
+let jumpPowerUpdateText;
+let jumpPowerUpdateImage;
 
 function preload() {
     // Load images
@@ -90,28 +90,28 @@ function create() {
         star.body.bounce.x = 0.7 + Math.random() * 10.2;
     }
 
-    starNumberText = game.add.text(game.world.right - 170, 16, 'Star: 0/3',
+    starCountText = game.add.text(game.world.right - 170, 16, 'Star: 0/3',
         {font: '24px Arial', fill: '#fff'});
 
-    metricsText = game.add.text(16, 16, "Metrics: none",
+    jumpPowerText = game.add.text(16, 16, "Jump power: 0",
         {font: "24px Arial", fill: "#fff"});
-    metricsUpdateText = game.add.text(game.world.centerX - 130, height, "none",
+    jumpPowerUpdateText = game.add.text(game.world.centerX - 130, height, "none",
         {font: "24px Arial", fill: "#fff"});
-    metricsUpdateImage = game.add.button(game.world.centerX - 45, height,
+    jumpPowerUpdateImage = game.add.button(game.world.centerX - 45, height,
         "rocket", null, this, 2, 1, 0);
 
     // Update with default parameters
     parameterX1Value = $("input#x1").text();
     parameterX2Value = $("input#x2").text();
-    parameterX1Text = game.add.text(16, 64, "x1: " + parameterX1Value,
+    parameterX1Text = game.add.text(16, 52, "Param 1: " + parameterX1Value,
         {font: "24px Arial", fill: "#fff"});
-    parameterX2Text = game.add.text(16, 112, "x2: " + parameterX2Text,
+    parameterX2Text = game.add.text(16, 88, "Param 2: " + parameterX2Text,
         {font: "24px Arial", fill: "#fff"});
 
     // Win text
-    winText = game.add.text(game.world.centerX - 50, game.world.centerY,
+    winningText = game.add.text(game.world.centerX - 50, game.world.centerY,
         "You win!", {font: "24px Arial", fill: "#fff"});
-    winText.visible = false;
+    winningText.visible = false;
 
 }
 
@@ -123,10 +123,10 @@ function update() {
 
     // Update parameter values
     parameterX1Value = $("input#x1").get(0).value;
-    parameterX1Text.text = "x1: " + parameterX1Value;
+    parameterX1Text.text = "Param 1: " + parameterX1Value;
 
     parameterX2Value = $("input#x2").get(0).value;
-    parameterX2Text.text = "x2: " + parameterX2Value;
+    parameterX2Text.text = "Param 2: " + parameterX2Value;
 
     // Move the player
     player.body.velocity.x = 0;
@@ -172,14 +172,14 @@ function update() {
         || (jumpButton.isDown || isPointerJumping) && player.body.touching.down && game.time.now
         > jumpTimer) {
 
-        if (metricsValue == "none" || metricsValue < 0) {
-            player.body.velocity.y = -200;
-        } else if (metricsValue < 80) {
-            player.body.velocity.y = -1 * metricsValue - 200;
-        } else if (metricsValue < 90) {
-            player.body.velocity.y = -2 * metricsValue - 200;
+        if (jumpPowerValue === "none" || jumpPowerValue <= 0) {
+            player.body.velocity.y = -150;
+        } else if (jumpPowerValue < 70) {
+            player.body.velocity.y = -1 * jumpPowerValue - 200;
+        } else if (jumpPowerValue < 90) {
+            player.body.velocity.y = -2 * jumpPowerValue - 200;
         } else {
-            player.body.velocity.y = -3 * metricsValue - 200;
+            player.body.velocity.y = -3 * jumpPowerValue - 200;
         }
 
         jumpTimer = game.time.now + 300;
@@ -190,12 +190,12 @@ function update() {
 function collectStar(player, star) {
     star.kill();
 
-    starNumber += 1;
-    starNumberText.text = "Star: " + starNumber + "/3";
+    starCount += 1;
+    starCountText.text = "Star: " + starCount + "/3";
 
     // Display win text
-    if (starNumber == 3) {
-        winText.visible = true;
+    if (starCount == 3) {
+        winningText.visible = true;
     }
 }
 
@@ -204,35 +204,35 @@ function submitButtonOnClick() {
     parameterX1 = parseFloat(parameterX1Value);
     parameterX2 = parseFloat(parameterX2Value);
 
-    metricsText.text = "Metrics: " + "loading...";
+    jumpPowerText.text = "Jump power: " + "loading...";
 
     return submitMetric(parameterX1, parameterX2);
 }
 
 function submitMetric(parameterX1, parameterX2) {
     return setTimeout(function () {
-        metricsValue = getMetric(parameterX1, parameterX2)
-        metricsText.text = "Metrics: " + metricsValue;
+        jumpPowerValue = getMetric(parameterX1, parameterX2)
+        jumpPowerText.text = "Jump power: " + jumpPowerValue;
 
-        metricsUpdateText.x = game.world.centerX - 75;
-        metricsUpdateText.y = height;
-        metricsUpdateText.text = "New metrics: " + metricsValue + "!";
-        metricsUpdateText.alpha = 0;
+        jumpPowerUpdateText.x = game.world.centerX - 120;
+        jumpPowerUpdateText.y = height;
+        jumpPowerUpdateText.text = "New jump power: " + jumpPowerValue + "!";
+        jumpPowerUpdateText.alpha = 0;
 
-        metricsUpdateImage.x = game.world.centerX - 45
-        metricsUpdateImage.y = height
-        metricsUpdateImage.alpha = 0;
+        jumpPowerUpdateImage.x = game.world.centerX - 45
+        jumpPowerUpdateImage.y = height
+        jumpPowerUpdateImage.alpha = 0;
 
         // Display
         const durationTime = 1500;
 
-        game.add.tween(metricsUpdateText).to({y: -32}, durationTime,
+        game.add.tween(jumpPowerUpdateText).to({y: -32}, durationTime,
             Phaser.Easing.Linear.None, true);
-        game.add.tween(metricsUpdateText).to({alpha: 1}, durationTime,
+        game.add.tween(jumpPowerUpdateText).to({alpha: 1}, durationTime,
             Phaser.Easing.Linear.None, true);
-        game.add.tween(metricsUpdateImage).to({y: -180}, durationTime,
+        game.add.tween(jumpPowerUpdateImage).to({y: -180}, durationTime,
             Phaser.Easing.Linear.None, true);
-        game.add.tween(metricsUpdateImage).to({alpha: 1}, durationTime,
+        game.add.tween(jumpPowerUpdateImage).to({alpha: 1}, durationTime,
             Phaser.Easing.Linear.None, true);
     }, 500)
 }

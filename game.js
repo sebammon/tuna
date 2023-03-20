@@ -131,18 +131,18 @@ function update() {
     // Move the player
     player.body.velocity.x = 0;
 
-    const pointerIsDown = touch1.isDown;
+    const touch1Down = touch1.isDown;
     const touch1X = touch1.worldX;
     const touch1Y = touch1.worldY;
 
-    if (cursors.left.isDown || pointerIsDown && touch1X < 400 && touch1Y > 250) {
+    if (cursors.left.isDown || touch1Down && touch1X < 400 && touch1Y > 250) {
         player.body.velocity.x = -150;
 
         if (facing != 'left') {
             player.animations.play('left');
             facing = 'left';
         }
-    } else if (cursors.right.isDown || pointerIsDown && touch1X > 400 && touch1Y > 250) {
+    } else if (cursors.right.isDown || touch1Down && touch1X > 400 && touch1Y > 250) {
         player.body.velocity.x = 150;
 
         if (facing != 'right') {
@@ -163,7 +163,10 @@ function update() {
         }
     }
 
-    const isPointerJumping = pointerIsDown && touch1Y < 350;
+    const touch2Down = touch2.isDown;
+    const touch2Y = touch2.worldY;
+
+    const isPointerJumping = touch1Down && touch1Y < 350 || touch2Down && touch2Y < 350
 
     if ((jumpButton.isDown || isPointerJumping) && player.body.onFloor() && game.time.now > jumpTimer
         || (jumpButton.isDown || isPointerJumping) && player.body.touching.down && game.time.now
